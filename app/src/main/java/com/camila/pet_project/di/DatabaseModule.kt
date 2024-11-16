@@ -3,6 +3,10 @@ package com.camila.pet_project.di
 import android.content.Context
 import androidx.room.Room
 import com.camila.pet_project.data.PetPassportDatabase
+import com.camila.pet_project.data.dao.PetDao
+import com.camila.pet_project.data.dao.UserDao
+import com.camila.pet_project.data.dao.VaccineDao
+import com.camila.pet_project.data.dao.VaccineRegisterDao
 import com.camila.pet_project.util.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -27,10 +31,18 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDao(database: PetPassportDatabase) {
-        database.userDao()
-        database.petDao()
-        database.vaccineDao()
+    fun provideUserDao(database: PetPassportDatabase): UserDao = database.userDao()
+
+    @Singleton
+    @Provides
+    fun providePetDao(database: PetPassportDatabase): PetDao = database.petDao()
+
+    @Singleton
+    @Provides
+    fun provideVaccineDao(database: PetPassportDatabase): VaccineDao = database.vaccineDao()
+
+    @Singleton
+    @Provides
+    fun provideVaccineRegisterDao(database: PetPassportDatabase): VaccineRegisterDao =
         database.vaccineRegisterDao()
-    }
 }
