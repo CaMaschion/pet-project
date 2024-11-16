@@ -2,7 +2,7 @@ package com.camila.pet_project.di
 
 import android.content.Context
 import androidx.room.Room
-import com.camila.pet_project.data.VetPassportDatabase
+import com.camila.pet_project.data.PetPassportDatabase
 import com.camila.pet_project.util.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -21,13 +21,13 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ) = Room.databaseBuilder(
         context,
-        VetPassportDatabase::class.java,
+        PetPassportDatabase::class.java,
         DATABASE_NAME
     ).build()
 
     @Singleton
     @Provides
-    fun provideDao(database: VetPassportDatabase) {
+    fun provideDao(database: PetPassportDatabase) {
         database.userDao()
         database.petDao()
         database.vaccineDao()

@@ -8,10 +8,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM user_table ORDER BY id ASC")
-    fun getAllUsers(): Flow<List<User>>
+    @Query("SELECT * FROM user_table WHERE userName = :userName")
+    fun getUserByUserName(userName: String): Flow<User>
 
-    @Query("SELECT * FROM user_table WHERE id = :userId")
-    fun getUserById(userId: Int): Flow<User>
+    @Query("SELECT * FROM user_table WHERE password = :password")
+    fun getUserByPassword(password: String): Flow<User>
+
+    @Query("SELECT * FROM user_table WHERE userName = :userName AND password = :password")
+    fun getUserByUserNameAndPassword(userName: String, password: String): Flow<User>
+
+    suspend fun insertUser(user: User)
 
 }
