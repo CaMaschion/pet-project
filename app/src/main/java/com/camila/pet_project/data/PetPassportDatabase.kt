@@ -21,7 +21,7 @@ import com.camila.pet_project.data.model.VaccineRegister
     version = 1,
     exportSchema = false
 )
-abstract class VetPassportDatabase : RoomDatabase() {
+abstract class PetPassportDatabase : RoomDatabase() {
     abstract fun petDao(): PetDao
     abstract fun userDao(): UserDao
     abstract fun vaccineDao(): VaccineDao
