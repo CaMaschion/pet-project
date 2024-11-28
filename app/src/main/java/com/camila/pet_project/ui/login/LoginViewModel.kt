@@ -1,12 +1,13 @@
 package com.camila.pet_project.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.camila.pet_project.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,52 +17,62 @@ class LoginViewModel @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
-    val loginState: StateFlow<LoginState> = _loginState
+    private val _uiState = MutableStateFlow(LoginState())
+    val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
-    private fun login(userName: String, password: String) {
+
+    fun login(userName: String, password: String) {
         viewModelScope.launch {
             val userExist = checkIfUserNameExist(userName)
-            if (userExist) {
-                val combinationExist =
-                    validateUserAndPasswordCombination(userName, password)
-                if (combinationExist) {
-                    _loginState.update { LoginState.Success }
-                } else {
-                    _loginState.update { LoginState.Invalid }
-                }
-            } else {
+
+//            if (userExist) {
+//                val combinationExist =
+//                    validateUserAndPasswordCombination(userName, password)
+//
+//                if (combinationExist) {
+//                    Log.i("LoginViewModel", "LoginState.Success")
+//                } else {
+//                    Log.i("LoginViewModel", "LoginState.Error")
+//                }
+//
+//            } else {
                 createUser(userName, password)
-                _loginState.update { LoginState.Success }
-            }
+                Log.i("LoginViewModel", "LoginState.Success")
+//            }
         }
     }
 
-    private fun createUser(userName: String, password: String) {
-        viewModelScope.launch {
-            repository.insertUser(userName, password)
-        }
+    private suspend fun createUser(userName: String, password: String) {
+        repository.insertUser(userName, password)
     }
 
     private suspend fun validateUserAndPasswordCombination(
         userName: String,
         password: String
     ): Boolean {
-        val userByUserNameAndPassword =
-            repository.getUserByUserNameAndPassword(userName, password).firstOrNull()
-        return userByUserNameAndPassword != null
+        repository.getUserByUserNameAndPassword(userName, password)
+        return true
     }
 
     private suspend fun checkIfUserNameExist(userName: String): Boolean {
-        val user = repository.getUserByUserName(userName).firstOrNull()
-        return user != null
+        repository.getUserByUserName(userName)
+        return true
+    }
+
+    fun updateUserName(userName: String) {
+        _uiState.update {
+            it.copy(userName = userName)
+        }
+    }
+
+    fun updatePassword(password: String) {
+        _uiState.update {
+            it.copy(password = password)
+        }
     }
 }
 
-open class LoginState {
-    object Idle : LoginState()
-    object Success : LoginState()
-    object Invalid : LoginState()
-    object Loading : LoginState()
-    data class Error(val message: String) : LoginState()
-}
+data class LoginState(
+    var userName: String = "",
+    val password: String = ""
+)

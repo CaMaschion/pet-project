@@ -12,5 +12,5 @@ data class Pet (
     val age: Int = 0,
     val description: String = "",
     val userId: Int = 0,
-    val vaccines: MutableList<Vaccine> = mutableListOf()
+//    val vaccines: MutableList<Vaccine> = mutableListOf()
 )

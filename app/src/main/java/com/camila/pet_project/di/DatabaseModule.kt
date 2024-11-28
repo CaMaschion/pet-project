@@ -23,12 +23,14 @@ object DatabaseModule {
     @Provides
     fun provideDatabase(
         @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
-        context,
-        PetPassportDatabase::class.java,
-        DATABASE_NAME
-    ).build()
-
+    ): PetPassportDatabase {
+        return Room.databaseBuilder(
+            context,
+            PetPassportDatabase::class.java,
+            DATABASE_NAME
+        ).build()
+    }
+    
     @Singleton
     @Provides
     fun provideUserDao(database: PetPassportDatabase): UserDao = database.userDao()

@@ -1,5 +1,6 @@
 package com.camila.pet_project.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,31 +37,49 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.camila.pet_project.R
+import com.camila.pet_project.data.model.User
+import com.camila.pet_project.data.repositories.UserRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClicked: (String) -> Unit,
-//    viewModel: LoginViewModel
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
 
-    var showSnackbar by remember {
-        mutableStateOf(false)
+    // Observe state changes
+    LaunchedEffect(uiState) {
+        Toast.makeText(context, "Lauched Effect: Login Success!", Toast.LENGTH_SHORT).show()
     }
 
-    var username by remember {
-        mutableStateOf(TextFieldValue())
-    }
+    LoginContent(
+        title = uiState.userName,
+        password = uiState.password,
+        onNameChanged = viewModel::updateUserName,
+        onPasswordChanged = viewModel::updatePassword,
+        loginButtonClicked = {
+            viewModel.login(uiState.userName, uiState.password)
+        }
+    )
+}
 
-    var enteredPassword by remember {
-        mutableStateOf(TextFieldValue())
-    }
-
-    Surface(
-
-    ) {
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun LoginContent(
+    title: String,
+    password: String,
+    onNameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    loginButtonClicked: () -> Unit,
+) {
+    Surface {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,13 +88,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.pawprint),
                 contentDescription = "Logo Image",
                 modifier = Modifier
-                    .size(200.dp) // Adjust the size of the image as needed
+                    .size(180.dp)
                     .padding(bottom = 16.dp)
 
             )
@@ -81,8 +102,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = title,
+                onValueChange = onNameChanged,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 label = {
                     Text(
@@ -103,8 +124,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(5.dp))
 
             OutlinedTextField(
-                value = enteredPassword,
-                onValueChange = { enteredPassword = it },
+                value = password,
+                onValueChange = onPasswordChanged,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 label = {
@@ -131,7 +152,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-
+                    loginButtonClicked()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Black),
                 modifier = Modifier
@@ -142,11 +163,8 @@ fun LoginScreen(
                 ) {
                 Text(text = "Acessar")
             }
-
         }
-
     }
-
 }
 
 @Composable
@@ -208,7 +226,7 @@ private fun DrawClearButton() {
         modifier = Modifier
             .padding(bottom = 16.dp)
             .height(50.dp),
-        ) {
+    ) {
         Text(text = "Limpar")
     }
 }
@@ -224,15 +242,16 @@ private fun DrawClearButton() {
 //    } else {
 //        Toast.makeText(context, "Try again!", Toast.LENGTH_SHORT).show()
 //    }
-//
 //}
 
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    var passwordEntered by remember { mutableStateOf("") }
-    LoginScreen(
-        onLoginClicked = { password ->
-        passwordEntered = password
-    })
+    LoginContent(
+        title = "Title",
+        password = "Password",
+        onNameChanged = {},
+        onPasswordChanged = {},
+        loginButtonClicked = {}
+    )
 }
