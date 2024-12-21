@@ -62,10 +62,16 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
+    ksp(libs.androidx.room.compiler)
+
 
     //Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.storage)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
