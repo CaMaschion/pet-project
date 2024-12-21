@@ -25,20 +25,20 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             val userExist = checkIfUserNameExist(userName)
 
-//            if (userExist) {
-//                val combinationExist =
-//                    validateUserAndPasswordCombination(userName, password)
-//
-//                if (combinationExist) {
-//                    Log.i("LoginViewModel", "LoginState.Success")
-//                } else {
-//                    Log.i("LoginViewModel", "LoginState.Error")
-//                }
-//
-//            } else {
+            if (userExist) {
+                val combinationExist =
+                    validateUserAndPasswordCombination(userName, password)
+
+                if (combinationExist) {
+                    Log.i("LoginViewModel", "LoginState.Success")
+                } else {
+                    Log.i("LoginViewModel", "LoginState.Error")
+                }
+
+            } else {
                 createUser(userName, password)
                 Log.i("LoginViewModel", "LoginState.Success")
-//            }
+            }
         }
     }
 
@@ -55,8 +55,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun checkIfUserNameExist(userName: String): Boolean {
-        repository.getUserByUserName(userName)
-        return true
+        val user = repository.getUserByUserName(userName)
+        return user != null
     }
 
     fun updateUserName(userName: String) {
