@@ -20,7 +20,6 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoginState())
     val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
-
     fun login(userName: String, password: String) {
         viewModelScope.launch {
             val userExist = checkIfUserNameExist(userName)
@@ -61,18 +60,33 @@ class LoginViewModel @Inject constructor(
 
     fun updateUserName(userName: String) {
         _uiState.update {
-            it.copy(userName = userName)
+            it.copy(
+                userName = userName,
+                readyToLogin = isReadyToLogin(it, userName, it.password)
+            )
         }
     }
 
     fun updatePassword(password: String) {
         _uiState.update {
-            it.copy(password = password)
+            it.copy(
+                password = password,
+                readyToLogin = isReadyToLogin(it, it.userName, password)
+            )
         }
+    }
+
+    private fun isReadyToLogin(
+        loginState: LoginState,
+        userName: String,
+        password: String
+    ): Boolean {
+        return userName.isNotEmpty() && password.isNotEmpty()
     }
 }
 
 data class LoginState(
     var userName: String = "",
-    val password: String = ""
+    val password: String = "",
+    val readyToLogin: Boolean = false
 )
