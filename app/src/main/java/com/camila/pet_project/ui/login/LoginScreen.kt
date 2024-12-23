@@ -18,6 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +31,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.camila.pet_project.R
+import com.camila.pet_project.ui.navigation.NavigationEvent
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    navController: NavHostController,
+    onLoginClick: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvents.collect { event ->
+            when (event) {
+                is NavigationEvent.NavigateToPetList -> {
+                    navController.navigate("petList") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            }
+        }
+    }
 
     LoginContent(
         title = uiState.userName,
@@ -46,6 +63,9 @@ fun LoginScreen(
         onPasswordChanged = viewModel::updatePassword,
         loginButtonClicked = {
             viewModel.login(uiState.userName, uiState.password)
+            if (uiState.readyToLogin) {
+                onLoginClick()
+            }
         },
         loginButtonEnabled = uiState.readyToLogin
     )

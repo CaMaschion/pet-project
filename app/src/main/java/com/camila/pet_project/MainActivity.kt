@@ -4,14 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.camila.pet_project.ui.login.LoginScreen
+import androidx.navigation.compose.rememberNavController
+import com.camila.pet_project.ui.navigation.AppNavHost
 import com.camila.pet_project.ui.theme.PetprojectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,21 +17,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PetprojectTheme {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
-                ) {
-                    LoginScreen()
-                }
+            MyApp {
+                val navController = rememberNavController()
+                AppNavHost(navController = navController)
             }
         }
     }
 }
 
+@Composable
+fun MyApp(content: @Composable () -> Unit) {
+    PetprojectTheme {
+        content()
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun AppEntryPoint() {
-    LoginScreen()
+fun PreviewMyApp() {
+    val navController = rememberNavController()
+    MyApp {
+        AppNavHost(navController = navController)
+    }
 }

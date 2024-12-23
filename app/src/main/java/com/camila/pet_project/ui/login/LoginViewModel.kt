@@ -3,10 +3,13 @@ package com.camila.pet_project.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.camila.pet_project.data.repositories.UserRepository
+import com.camila.pet_project.data.repositories.UserRepositoryImpl
+import com.camila.pet_project.ui.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -14,29 +17,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
     val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
+    private val _navigationEvents = MutableSharedFlow<NavigationEvent>()
+    val navigationEvents = _navigationEvents.asSharedFlow()
+
     fun login(userName: String, password: String) {
         viewModelScope.launch {
             val userExist = checkIfUserNameExist(userName)
-
             if (userExist) {
                 val combinationExist =
                     validateUserAndPasswordCombination(userName, password)
-
                 if (combinationExist) {
-                    Log.i("LoginViewModel", "LoginState.Success")
+                    _navigationEvents.emit(NavigationEvent.NavigateToPetList)
                 } else {
                     Log.i("LoginViewModel", "LoginState.Error")
                 }
 
             } else {
                 createUser(userName, password)
-                Log.i("LoginViewModel", "LoginState.Success")
+                _navigationEvents.emit(NavigationEvent.NavigateToPetList)
             }
         }
     }
@@ -49,8 +53,8 @@ class LoginViewModel @Inject constructor(
         userName: String,
         password: String
     ): Boolean {
-        repository.getUserByUserNameAndPassword(userName, password)
-        return true
+        val user = repository.getUserByUserNameAndPassword(userName, password)
+        return user != null
     }
 
     private suspend fun checkIfUserNameExist(userName: String): Boolean {
@@ -62,7 +66,7 @@ class LoginViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 userName = userName,
-                readyToLogin = isReadyToLogin(it, userName, it.password)
+                readyToLogin = isReadyToLogin(userName, it.password)
             )
         }
     }
@@ -71,13 +75,12 @@ class LoginViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 password = password,
-                readyToLogin = isReadyToLogin(it, it.userName, password)
+                readyToLogin = isReadyToLogin(it.userName, password)
             )
         }
     }
 
     private fun isReadyToLogin(
-        loginState: LoginState,
         userName: String,
         password: String
     ): Boolean {
