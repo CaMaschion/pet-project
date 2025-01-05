@@ -31,8 +31,6 @@ fun PetCardComponent(
     petName: String,
     breed: String,
     age: String,
-    vaccineStatus: String,
-    nextAppointment: String,
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -68,14 +66,6 @@ fun PetCardComponent(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically),
-                        text = vaccineStatus,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (vaccineStatus == "Em dia") Color.Green else Color.Red
-                    )
                 }
 
                 Text(
@@ -90,16 +80,6 @@ fun PetCardComponent(
                     text = "Idade: $age",
                     style = MaterialTheme.typography.bodyMedium,
                 )
-
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Consulta dia: $nextAppointment",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
     }
@@ -113,7 +93,5 @@ fun PetListScreenPreview() {
         petName = "Bagheera",
         breed = "Siamese",
         age = "2 years",
-        vaccineStatus = "Vaccinated",
-        nextAppointment = "10/10/2021"
     )
 }
