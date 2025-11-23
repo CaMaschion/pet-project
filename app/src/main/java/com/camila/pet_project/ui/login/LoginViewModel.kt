@@ -3,7 +3,8 @@ package com.camila.pet_project.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.camila.pet_project.data.repositories.UserRepositoryImpl
+import com.camila.pet_project.domain.usecase.LoginUserUseCase
+import com.camila.pet_project.domain.usecase.RegisterUserUseCase
 import com.camila.pet_project.ui.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,9 +16,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for Login/Register screen
+ * Following MVVM pattern and Single Responsibility Principle
+ */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UserRepositoryImpl
+    private val loginUserUseCase: LoginUserUseCase,
+    private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
@@ -26,70 +32,151 @@ class LoginViewModel @Inject constructor(
     private val _navigationEvents = MutableSharedFlow<NavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
 
-    fun login(userName: String, password: String) {
-        viewModelScope.launch {
-            val userExist = checkIfUserNameExist(userName)
-            if (userExist) {
-                val combinationExist =
-                    validateUserAndPasswordCombination(userName, password)
-                if (combinationExist) {
-                    _navigationEvents.emit(NavigationEvent.NavigateToPetList)
-                } else {
-                    Log.i("LoginViewModel", "LoginState.Error")
-                }
+    /**
+     * Handles login action
+     */
+    fun login() {
+        val currentState = _uiState.value
 
-            } else {
-                createUser(userName, password)
-                _navigationEvents.emit(NavigationEvent.NavigateToPetList)
-            }
+        if (!currentState.isValid) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            val result = loginUserUseCase(currentState.userName, currentState.password)
+
+            result.fold(
+                onSuccess = { user ->
+                    Log.d(TAG, "Login successful for user: ${user.userName}")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = null,
+                            currentUserId = user.id
+                        )
+                    }
+                    _navigationEvents.emit(NavigationEvent.NavigateToPetList(user.id))
+                },
+                onFailure = { error ->
+                    Log.e(TAG, "Login failed: ${error.message}")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Login failed"
+                        )
+                    }
+                }
+            )
         }
     }
 
-    private suspend fun createUser(userName: String, password: String) {
-        repository.insertUser(userName, password)
+    /**
+     * Handles register action
+     */
+    fun register() {
+        val currentState = _uiState.value
+
+        if (!currentState.isValid) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            val result = registerUserUseCase(currentState.userName, currentState.password)
+
+            result.fold(
+                onSuccess = { user ->
+                    Log.d(TAG, "Registration successful for user: ${user.userName}")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = null,
+                            currentUserId = user.id
+                        )
+                    }
+                    _navigationEvents.emit(NavigationEvent.NavigateToPetList(user.id))
+                },
+                onFailure = { error ->
+                    Log.e(TAG, "Registration failed: ${error.message}")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Registration failed"
+                        )
+                    }
+                }
+            )
+        }
     }
 
-    private suspend fun validateUserAndPasswordCombination(
-        userName: String,
-        password: String
-    ): Boolean {
-        val user = repository.getUserByUserNameAndPassword(userName, password)
-        return user != null
-    }
-
-    private suspend fun checkIfUserNameExist(userName: String): Boolean {
-        val user = repository.getUserByUserName(userName)
-        return user != null
-    }
-
+    /**
+     * Updates username field
+     */
     fun updateUserName(userName: String) {
         _uiState.update {
             it.copy(
                 userName = userName,
-                readyToLogin = isReadyToLogin(userName, it.password)
-            )
+                errorMessage = null
+            ).validate()
         }
     }
 
+    /**
+     * Updates password field
+     */
     fun updatePassword(password: String) {
         _uiState.update {
             it.copy(
                 password = password,
-                readyToLogin = isReadyToLogin(it.userName, password)
+                errorMessage = null
+            ).validate()
+        }
+    }
+
+    /**
+     * Toggles between login and register mode
+     */
+    fun toggleMode() {
+        _uiState.update {
+            it.copy(
+                isRegisterMode = !it.isRegisterMode,
+                errorMessage = null
             )
         }
     }
 
-    private fun isReadyToLogin(
-        userName: String,
-        password: String
-    ): Boolean {
-        return userName.isNotEmpty() && password.isNotEmpty()
+    /**
+     * Clears error message
+     */
+    fun clearError() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    companion object {
+        private const val TAG = "LoginViewModel"
     }
 }
 
+/**
+ * UI State for Login screen
+ */
 data class LoginState(
-    var userName: String = "",
+    val userName: String = "",
     val password: String = "",
-    val readyToLogin: Boolean = false
-)
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val isRegisterMode: Boolean = false,
+    val isValid: Boolean = false,
+    val currentUserId: Int = 0
+) {
+    /**
+     * Validates the current state and updates isValid flag
+     */
+    fun validate(): LoginState {
+        val valid = userName.isNotBlank() && password.isNotBlank()
+        return this.copy(isValid = valid)
+    }
+}
