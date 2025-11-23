@@ -2,23 +2,57 @@ package com.camila.pet_project.data.repositories
 
 import com.camila.pet_project.data.dao.UserDao
 import com.camila.pet_project.data.model.User
-import dagger.hilt.android.scopes.ViewModelScoped
+import com.camila.pet_project.domain.model.UserDomain
+import com.camila.pet_project.domain.repository.UserRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ViewModelScoped
-class UserRepositoryImpl @Inject constructor(private val userDao: UserDao) {
+/**
+ * Implementation of UserRepository
+ * Handles data operations and mapping between data and domain layers
+ * Following Repository Pattern and Single Responsibility Principle
+ */
+@Singleton
+class UserRepositoryImpl @Inject constructor(
+    private val userDao: UserDao
+) : UserRepository {
 
-    suspend fun getUserByUserName(userName: String): User? =
-        userDao.getUserByUserName(userName)
+    override suspend fun getUserByUserName(userName: String): UserDomain? {
+        return userDao.getUserByUserName(userName)?.toDomain()
+    }
 
-    suspend fun getUserByUserNameAndPassword(userName: String, password: String): User? =
-        userDao.getUserByUserNameAndPassword(userName, password)
+    override suspend fun authenticateUser(userName: String, password: String): UserDomain? {
+        return userDao.getUserByUserNameAndPassword(userName, password)?.toDomain()
+    }
 
-    suspend fun insertUser(user: String, password: String) {
-        val newUser = User(
-            userName = user,
-            password = password
+    override suspend fun registerUser(userName: String, password: String): Result<UserDomain> {
+        return try {
+            val newUser = User(
+                userName = userName,
+                password = password
+            )
+            userDao.insertUser(newUser)
+
+            // Retrieve the created user to get the generated ID
+            val createdUser = userDao.getUserByUserName(userName)
+            if (createdUser != null) {
+                Result.success(createdUser.toDomain())
+            } else {
+                Result.failure(Exception("Failed to retrieve created user"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Failed to register user: ${e.message}"))
+        }
+    }
+
+    /**
+     * Extension function to map User entity to UserDomain
+     */
+    private fun User.toDomain(): UserDomain {
+        return UserDomain(
+            id = this.id,
+            userName = this.userName,
+            password = this.password
         )
-        userDao.insertUser(newUser)
     }
 }

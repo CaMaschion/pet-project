@@ -18,7 +18,7 @@ import com.camila.pet_project.data.model.Pet
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PetListScreen() {
+fun PetListScreen(userId: Int = 0) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -33,12 +33,14 @@ fun PetListScreen() {
                 name = "Bolinha",
                 breed = "Vira-lata",
                 age = 2,
+                userId = userId
             ),
             Pet(
                 id = 0,
                 name = "Bagheera",
                 breed = "Vira-lata",
                 age = 2,
+                userId = userId
             )
         )
 
@@ -49,8 +51,8 @@ fun PetListScreen() {
             items(petsMock) { pet ->
                 PetCardComponent(
                     petPhoto = R.drawable.pawprint,
-                    petName = "Bolinha",
-                    breed = "Vira-lata",
+                    petName = pet.name,
+                    breed = pet.breed,
                     age = "${pet.age} anos",
                 )
             }
@@ -61,5 +63,5 @@ fun PetListScreen() {
 @Preview
 @Composable
 fun PetListScreenPreview() {
-    PetListScreen()
+    PetListScreen(userId = 1)
 }

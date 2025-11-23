@@ -7,6 +7,8 @@ import com.camila.pet_project.data.dao.PetDao
 import com.camila.pet_project.data.dao.UserDao
 import com.camila.pet_project.data.dao.VaccineDao
 import com.camila.pet_project.data.dao.VaccineRegisterDao
+import com.camila.pet_project.data.repositories.UserRepositoryImpl
+import com.camila.pet_project.domain.repository.UserRepository
 import com.camila.pet_project.util.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -47,4 +49,10 @@ object DatabaseModule {
     @Provides
     fun provideVaccineRegisterDao(database: PetPassportDatabase): VaccineRegisterDao =
         database.vaccineRegisterDao()
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository {
+        return userRepositoryImpl
+    }
 }
