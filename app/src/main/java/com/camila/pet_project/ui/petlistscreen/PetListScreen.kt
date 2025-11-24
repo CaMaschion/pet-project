@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.camila.pet_project.R
 import com.camila.pet_project.components.PetCardComponent
-import com.camila.pet_project.data.model.Pet
+import com.camila.pet_project.data.entity.PetEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -28,14 +28,14 @@ fun PetListScreen(userId: Int = 0) {
     ) { paddingValues ->
 
         val petsMock = listOf(
-            Pet(
+            PetEntity(
                 id = 0,
                 name = "Bolinha",
                 breed = "Vira-lata",
                 age = 2,
                 userId = userId
             ),
-            Pet(
+            PetEntity(
                 id = 0,
                 name = "Bagheera",
                 breed = "Vira-lata",

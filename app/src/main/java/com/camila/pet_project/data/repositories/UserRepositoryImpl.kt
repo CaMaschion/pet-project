@@ -1,7 +1,7 @@
 package com.camila.pet_project.data.repositories
 
 import com.camila.pet_project.data.dao.UserDao
-import com.camila.pet_project.data.model.User
+import com.camila.pet_project.data.entity.UserEntity
 import com.camila.pet_project.domain.model.UserDomain
 import com.camila.pet_project.domain.repository.UserRepository
 import javax.inject.Inject
@@ -27,7 +27,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun registerUser(userName: String, password: String): Result<UserDomain> {
         return try {
-            val newUser = User(
+            val newUser = UserEntity(
                 userName = userName,
                 password = password
             )
@@ -48,7 +48,7 @@ class UserRepositoryImpl @Inject constructor(
     /**
      * Extension function to map User entity to UserDomain
      */
-    private fun User.toDomain(): UserDomain {
+    private fun UserEntity.toDomain(): UserDomain {
         return UserDomain(
             id = this.id,
             userName = this.userName,
