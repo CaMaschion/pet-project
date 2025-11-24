@@ -1,6 +1,5 @@
 package com.camila.pet_project.data.entity
 
-
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -24,6 +23,10 @@ data class PetEntity(
     val type: String = "",
     val breed: String = "",
     val age: Int = 0,
+    val photoUri: String = "",
+    val address: String = "",
+    val tutorPhone: String = "",
+    val fivFelvStatus: String = "", // "negative", "positive", or "not_tested"
     val description: String = "",
     val userId: Int = 0
 )

@@ -7,7 +7,9 @@ import com.camila.pet_project.data.dao.PetDao
 import com.camila.pet_project.data.dao.UserDao
 import com.camila.pet_project.data.dao.VaccineDao
 import com.camila.pet_project.data.dao.VaccineRegisterDao
+import com.camila.pet_project.data.repositories.PetRepositoryImpl
 import com.camila.pet_project.data.repositories.UserRepositoryImpl
+import com.camila.pet_project.domain.repository.PetRepository
 import com.camila.pet_project.domain.repository.UserRepository
 import com.camila.pet_project.util.Constants.DATABASE_NAME
 import dagger.Module
@@ -30,7 +32,9 @@ object DatabaseModule {
             context,
             PetPassportDatabase::class.java,
             DATABASE_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
     
     @Singleton
@@ -54,5 +58,11 @@ object DatabaseModule {
     @Provides
     fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository {
         return userRepositoryImpl
+    }
+
+    @Singleton
+    @Provides
+    fun providePetRepository(petRepositoryImpl: PetRepositoryImpl): PetRepository {
+        return petRepositoryImpl
     }
 }

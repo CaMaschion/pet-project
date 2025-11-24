@@ -9,4 +9,3 @@ data class UserDomain(
     val userName: String,
     val password: String
 )
-
