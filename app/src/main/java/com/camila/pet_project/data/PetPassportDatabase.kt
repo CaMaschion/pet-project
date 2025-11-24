@@ -6,19 +6,19 @@ import com.camila.pet_project.data.dao.PetDao
 import com.camila.pet_project.data.dao.UserDao
 import com.camila.pet_project.data.dao.VaccineDao
 import com.camila.pet_project.data.dao.VaccineRegisterDao
-import com.camila.pet_project.data.model.Pet
-import com.camila.pet_project.data.model.User
-import com.camila.pet_project.data.model.Vaccine
-import com.camila.pet_project.data.model.VaccineRegister
+import com.camila.pet_project.data.entity.PetEntity
+import com.camila.pet_project.data.entity.UserEntity
+import com.camila.pet_project.data.entity.VaccineEntity
+import com.camila.pet_project.data.entity.VaccineRegisterEntity
 
 @Database(
     entities = [
-        Pet::class,
-        User::class,
-        Vaccine::class,
-        VaccineRegister::class
+        PetEntity::class,
+        UserEntity::class,
+        VaccineEntity::class,
+        VaccineRegisterEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PetPassportDatabase : RoomDatabase() {
