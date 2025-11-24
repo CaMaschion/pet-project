@@ -6,13 +6,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.camila.pet_project.ui.addpetscreen.AddPetScreen
 import com.camila.pet_project.ui.login.LoginScreen
 import com.camila.pet_project.ui.petlistscreen.PetListScreen
 
 enum class Routes(val route: String) {
     Login("login"),
-    PetList("petList/{userId}") {
-        fun createRoute(userId: Int) = "petList/$userId"
+    PetList("petList/{userId}"),
+    AddPet("addPet/{userId}");
+
+    companion object {
+        fun petListRoute(userId: Int) = "petList/$userId"
+        fun addPetRoute(userId: Int) = "addPet/$userId"
     }
 }
 
@@ -36,7 +41,28 @@ fun AppNavHost(
             )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
-            PetListScreen(userId = userId)
+            PetListScreen(
+                userId = userId,
+                onAddPetClick = {
+                    navController.navigate(Routes.addPetRoute(userId))
+                }
+            )
+        }
+        composable(
+            route = Routes.AddPet.route,
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            AddPetScreen(
+                userId = userId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

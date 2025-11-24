@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/camila/pet_project/data/entity/PetEntity.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/camila/pet_project/data/entity/PetEntity.kt" />
+              <option name="originalContent" value="package com.camila.pet_project.data.entity&#10;&#10;import androidx.room.Entity&#10;import androidx.room.ForeignKey&#10;import androidx.room.Index&#10;import androidx.room.PrimaryKey&#10;&#10;@Entity(&#10;    tableName = &quot;pet_table&quot;,&#10;    foreignKeys = [&#10;        ForeignKey(&#10;            entity = UserEntity::class,&#10;            parentColumns = [&quot;id&quot;],&#10;            childColumns = [&quot;userId&quot;],&#10;            onDelete = ForeignKey.CASCADE&#10;        )&#10;    ],&#10;    indices = [Index(&quot;userId&quot;)]&#10;)&#10;data class PetEntity(&#10;    @PrimaryKey(autoGenerate = true) var id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;    val type: String = &quot;&quot;,&#10;    val breed: String = &quot;&quot;,&#10;    val age: Int = 0,&#10;    val photoUri: String = &quot;&quot;,&#10;    val address: String = &quot;&quot;,&#10;    val tutorPhone: String = &quot;&quot;,&#10;    val fivFelvStatus: String = &quot;&quot;, // &quot;negative&quot;, &quot;positive&quot;, or &quot;not_tested&quot;&#10;    val description: String = &quot;&quot;,&#10;    val userId: Int = 0&#10;)&#10;" />
+              <option name="updatedContent" value="package com.camila.pet_project.data.entity&#10;&#10;import androidx.room.Entity&#10;import androidx.room.ForeignKey&#10;import androidx.room.Index&#10;import androidx.room.PrimaryKey&#10;&#10;@Entity(&#10;    tableName = &quot;pet_table&quot;,&#10;    foreignKeys = [&#10;        ForeignKey(&#10;            entity = UserEntity::class,&#10;            parentColumns = [&quot;id&quot;],&#10;            childColumns = [&quot;userId&quot;],&#10;            onDelete = ForeignKey.CASCADE&#10;        )&#10;    ],&#10;    indices = [Index(&quot;userId&quot;)]&#10;)&#10;data class PetEntity(&#10;    @PrimaryKey(autoGenerate = true) var id: Int = 0,&#10;    val name: String = &quot;&quot;,&#10;    val type: String = &quot;&quot;,&#10;    val breed: String = &quot;&quot;,&#10;    val age: Int = 0,&#10;    val photoUri: String = &quot;&quot;,&#10;    val address: String = &quot;&quot;,&#10;    val tutorPhone: String = &quot;&quot;,&#10;    val fivFelvStatus: String = &quot;&quot;, // &quot;negative&quot;, &quot;positive&quot;, or &quot;not_tested&quot;&#10;    val description: String = &quot;&quot;,&#10;    val userId: Int = 0&#10;)&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
