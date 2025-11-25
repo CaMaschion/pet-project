@@ -15,7 +15,13 @@ class RegisterUserUseCase @Inject constructor(
      * Executes registration operation
      * @return Result with UserDomain on success, or error message on failure
      */
-    suspend operator fun invoke(userName: String, password: String): Result<UserDomain> {
+    suspend operator fun invoke(
+        userName: String,
+        password: String,
+        name: String,
+        contactInfo: String,
+        address: String
+    ): Result<UserDomain> {
         return try {
             // Validate inputs
             if (userName.isBlank()) {
@@ -30,6 +36,18 @@ class RegisterUserUseCase @Inject constructor(
                 return Result.failure(Exception("Password must be at least 4 characters"))
             }
 
+            if (name.isBlank()) {
+                return Result.failure(Exception("Name cannot be empty"))
+            }
+
+            if (contactInfo.isBlank()) {
+                return Result.failure(Exception("Contact information cannot be empty"))
+            }
+
+            if (address.isBlank()) {
+                return Result.failure(Exception("Address cannot be empty"))
+            }
+
             // Check if user already exists
             val existingUser = userRepository.getUserByUserName(userName)
             if (existingUser != null) {
@@ -37,7 +55,7 @@ class RegisterUserUseCase @Inject constructor(
             }
 
             // Register new user
-            userRepository.registerUser(userName, password)
+            userRepository.registerUser(userName, password, name, contactInfo, address)
         } catch (e: Exception) {
             Result.failure(e)
         }

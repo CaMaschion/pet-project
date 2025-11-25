@@ -25,11 +25,20 @@ class UserRepositoryImpl @Inject constructor(
         return userDao.getUserByUserNameAndPassword(userName, password)?.toDomain()
     }
 
-    override suspend fun registerUser(userName: String, password: String): Result<UserDomain> {
+    override suspend fun registerUser(
+        userName: String,
+        password: String,
+        name: String,
+        contactInfo: String,
+        address: String
+    ): Result<UserDomain> {
         return try {
             val newUser = UserEntity(
                 userName = userName,
-                password = password
+                password = password,
+                name = name,
+                contactInfo = contactInfo,
+                address = address
             )
             userDao.insertUser(newUser)
 
@@ -52,7 +61,10 @@ class UserRepositoryImpl @Inject constructor(
         return UserDomain(
             id = this.id,
             userName = this.userName,
-            password = this.password
+            password = this.password,
+            name = this.name,
+            contactInfo = this.contactInfo,
+            address = this.address
         )
     }
 }

@@ -8,10 +8,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.camila.pet_project.ui.addpetscreen.AddPetScreen
 import com.camila.pet_project.ui.login.LoginScreen
+import com.camila.pet_project.ui.register.RegisterScreen
 import com.camila.pet_project.ui.petlistscreen.PetListScreen
 
 enum class Routes(val route: String) {
     Login("login"),
+    Register("register"),
     PetList("petList/{userId}"),
     AddPet("addPet/{userId}");
 
@@ -31,6 +33,9 @@ fun AppNavHost(
     ) {
         composable(Routes.Login.route) {
             LoginScreen(navController = navController)
+        }
+        composable(Routes.Register.route) {
+            RegisterScreen(navController = navController)
         }
         composable(
             route = Routes.PetList.route,

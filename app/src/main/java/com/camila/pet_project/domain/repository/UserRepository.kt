@@ -22,6 +22,12 @@ interface UserRepository {
      * Registers a new user
      * @throws Exception if user already exists
      */
-    suspend fun registerUser(userName: String, password: String): Result<UserDomain>
+    suspend fun registerUser(
+        userName: String,
+        password: String,
+        name: String = "",
+        contactInfo: String = "",
+        address: String = ""
+    ): Result<UserDomain>
 }
 
