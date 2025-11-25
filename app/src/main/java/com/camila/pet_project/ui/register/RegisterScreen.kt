@@ -1,16 +1,17 @@
-package com.camila.pet_project.ui.login
+package com.camila.pet_project.ui.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,7 +20,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,11 +41,10 @@ import com.camila.pet_project.R
 import com.camila.pet_project.ui.navigation.NavigationEvent
 
 @Composable
-fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+fun RegisterScreen(
+    viewModel: RegisterViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -57,41 +55,48 @@ fun LoginScreen(
                         popUpTo("login") { inclusive = true }
                     }
                 }
-                is NavigationEvent.NavigateToRegister -> {
-                    navController.navigate("register")
+                else -> {
+                    // No action needed for other events
                 }
             }
         }
     }
 
-    LoginContent(
+    RegisterContent(
         userName = uiState.userName,
         password = uiState.password,
+        name = uiState.name,
+        contactInfo = uiState.contactInfo,
+        address = uiState.address,
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         isValid = uiState.isValid,
         onUserNameChanged = viewModel::updateUserName,
         onPasswordChanged = viewModel::updatePassword,
-        onLoginClick = viewModel::login,
-        onNavigateToRegister = viewModel::navigateToRegister,
-        onClearError = viewModel::clearError
+        onNameChanged = viewModel::updateName,
+        onContactInfoChanged = viewModel::updateContactInfo,
+        onAddressChanged = viewModel::updateAddress,
+        onRegisterClick = viewModel::register
     )
 }
 
 @Composable
-private fun LoginContent(
+private fun RegisterContent(
     userName: String,
     password: String,
+    name: String,
+    contactInfo: String,
+    address: String,
     isLoading: Boolean,
     errorMessage: String?,
     isValid: Boolean,
     onUserNameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
-    onLoginClick: () -> Unit,
-    onNavigateToRegister: () -> Unit,
-    onClearError: () -> Unit
+    onNameChanged: (String) -> Unit,
+    onContactInfoChanged: (String) -> Unit,
+    onAddressChanged: (String) -> Unit,
+    onRegisterClick: () -> Unit
 ) {
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -99,23 +104,23 @@ private fun LoginContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // Logo
             Image(
                 painter = painterResource(id = R.drawable.pawprint),
                 contentDescription = "Pet Passport Logo",
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(100.dp)
                     .padding(bottom = 16.dp)
             )
 
             // Title
             Text(
-                text = "Welcome Back",
+                text = "Register Tutor",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -124,13 +129,67 @@ private fun LoginContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Login to continue",
+                text = "Create your account to manage your pets",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Tutor Name Field
+            OutlinedTextField(
+                value = name,
+                onValueChange = onNameChanged,
+                enabled = !isLoading,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                label = { Text("Full Name") },
+                singleLine = true,
+                isError = errorMessage != null,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Contact Info Field
+            OutlinedTextField(
+                value = contactInfo,
+                onValueChange = onContactInfoChanged,
+                enabled = !isLoading,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                label = { Text("Contact Info (Phone/Email)") },
+                singleLine = true,
+                isError = errorMessage != null,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Address Field
+            OutlinedTextField(
+                value = address,
+                onValueChange = onAddressChanged,
+                enabled = !isLoading,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                label = { Text("Address") },
+                singleLine = true,
+                isError = errorMessage != null,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Gray,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Username Field
             OutlinedTextField(
@@ -181,9 +240,9 @@ private fun LoginContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Login Button
+            // Register Button
             Button(
-                onClick = onLoginClick,
+                onClick = onRegisterClick,
                 enabled = isValid && !isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Black,
@@ -200,34 +259,8 @@ private fun LoginContent(
                     )
                 } else {
                     Text(
-                        text = "Login",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Navigate to Register Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Don't have an account?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-
-                TextButton(
-                    onClick = onNavigateToRegister,
-                    enabled = !isLoading
-                ) {
-                    Text(
                         text = "Register",
-                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -236,53 +269,3 @@ private fun LoginContent(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginContent(
-        userName = "",
-        password = "",
-        isLoading = false,
-        errorMessage = null,
-        isValid = false,
-        onUserNameChanged = {},
-        onPasswordChanged = {},
-        onLoginClick = {},
-        onNavigateToRegister = {},
-        onClearError = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenFilledPreview() {
-    LoginContent(
-        userName = "testuser",
-        password = "password123",
-        isLoading = false,
-        errorMessage = null,
-        isValid = true,
-        onUserNameChanged = {},
-        onPasswordChanged = {},
-        onLoginClick = {},
-        onNavigateToRegister = {},
-        onClearError = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenErrorPreview() {
-    LoginContent(
-        userName = "testuser",
-        password = "wrong",
-        isLoading = false,
-        errorMessage = "Invalid username or password",
-        isValid = true,
-        onUserNameChanged = {},
-        onPasswordChanged = {},
-        onLoginClick = {},
-        onNavigateToRegister = {},
-        onClearError = {}
-    )
-}

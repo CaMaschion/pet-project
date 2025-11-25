@@ -7,5 +7,8 @@ package com.camila.pet_project.domain.model
 data class UserDomain(
     val id: Int = 0,
     val userName: String,
-    val password: String
+    val password: String,
+    val name: String = "",
+    val contactInfo: String = "",
+    val address: String = ""
 )

@@ -18,7 +18,7 @@ import com.camila.pet_project.data.entity.VaccineRegisterEntity
         VaccineEntity::class,
         VaccineRegisterEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class PetPassportDatabase : RoomDatabase() {
