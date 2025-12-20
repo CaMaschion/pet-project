@@ -8,7 +8,6 @@ interface PetRepository {
     suspend fun updatePet(pet: PetDomain)
     suspend fun deletePet(pet: PetDomain)
     suspend fun getPetById(petId: Int): PetDomain?
-    fun getPetsByUserId(userId: Int): Flow<List<PetDomain>>
+    fun getPetsByTutorId(tutorId: Int): Flow<List<PetDomain>>
     fun getAllPets(): Flow<List<PetDomain>>
 }
-

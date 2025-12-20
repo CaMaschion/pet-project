@@ -9,17 +9,12 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.camila.pet_project.data.entity.PetEntity
 import com.camila.pet_project.data.entity.PetWithVaccineRegistersEntity
-import com.camila.pet_project.data.entity.UserEntity
-import com.camila.pet_project.data.entity.UserWithPetsEntity
 import com.camila.pet_project.data.entity.VaccineEntity
 import com.camila.pet_project.data.entity.VaccineRegisterEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PetDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity): Long
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPet(pet: PetEntity): Long
 
@@ -32,8 +27,8 @@ interface PetDao {
     @Query("SELECT * FROM pet_table WHERE id = :petId")
     suspend fun getPetById(petId: Int): PetEntity?
 
-    @Query("SELECT * FROM pet_table WHERE userId = :userId")
-    fun getPetsByUserId(userId: Int): Flow<List<PetEntity>>
+    @Query("SELECT * FROM pet_table WHERE tutorId = :tutorId")
+    fun getPetsByTutorId(tutorId: Int): Flow<List<PetEntity>>
 
     @Query("SELECT * FROM pet_table")
     fun getAllPets(): Flow<List<PetEntity>>
@@ -44,9 +39,6 @@ interface PetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVaccineRegister(register: VaccineRegisterEntity): Long
 
-    @Transaction
-    @Query("SELECT * FROM user_table WHERE id = :userId")
-    suspend fun getUserWithPets(userId: Int): UserWithPetsEntity?
 
     @Transaction
     @Query("SELECT * FROM pet_table WHERE id = :petId")

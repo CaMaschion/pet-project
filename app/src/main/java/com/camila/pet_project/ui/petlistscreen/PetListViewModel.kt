@@ -3,7 +3,7 @@ package com.camila.pet_project.ui.petlistscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.camila.pet_project.domain.model.PetDomain
-import com.camila.pet_project.domain.usecase.GetPetsByUserIdUseCase
+import com.camila.pet_project.domain.usecase.GetPetsByTutorIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,17 +19,17 @@ data class PetListUiState(
 
 @HiltViewModel
 class PetListViewModel @Inject constructor(
-    private val getPetsByUserIdUseCase: GetPetsByUserIdUseCase
+    private val getPetsByTutorIdUseCase: GetPetsByTutorIdUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PetListUiState())
     val uiState: StateFlow<PetListUiState> = _uiState.asStateFlow()
 
-    fun loadPets(userId: Int) {
+    fun loadPets(tutorId: Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                getPetsByUserIdUseCase(userId).collect { pets ->
+                getPetsByTutorIdUseCase(tutorId).collect { pets ->
                     _uiState.value = _uiState.value.copy(
                         pets = pets,
                         isLoading = false,

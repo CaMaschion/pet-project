@@ -8,18 +8,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.camila.pet_project.ui.addpetscreen.AddPetScreen
 import com.camila.pet_project.ui.login.LoginScreen
-import com.camila.pet_project.ui.register.RegisterScreen
+import com.camila.pet_project.presentation.tutor_register.TutorRegisterScreen
 import com.camila.pet_project.ui.petlistscreen.PetListScreen
 
 enum class Routes(val route: String) {
     Login("login"),
     Register("register"),
-    PetList("petList/{userId}"),
-    AddPet("addPet/{userId}");
+    PetList("petList/{tutorId}"),
+    AddPet("addPet/{tutorId}");
 
     companion object {
-        fun petListRoute(userId: Int) = "petList/$userId"
-        fun addPetRoute(userId: Int) = "addPet/$userId"
+        fun petListRoute(tutorId: Int) = "petList/$tutorId"
+        fun addPetRoute(tutorId: Int) = "addPet/$tutorId"
     }
 }
 
@@ -35,35 +35,41 @@ fun AppNavHost(
             LoginScreen(navController = navController)
         }
         composable(Routes.Register.route) {
-            RegisterScreen(navController = navController)
+            TutorRegisterScreen(
+                onNavigateToPetList = { tutorId ->
+                    navController.navigate(Routes.petListRoute(tutorId)) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                }
+            )
         }
         composable(
             route = Routes.PetList.route,
             arguments = listOf(
-                navArgument("userId") {
+                navArgument("tutorId") {
                     type = NavType.IntType
                 }
             )
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            val tutorId = backStackEntry.arguments?.getInt("tutorId") ?: 0
             PetListScreen(
-                userId = userId,
+                tutorId = tutorId,
                 onAddPetClick = {
-                    navController.navigate(Routes.addPetRoute(userId))
+                    navController.navigate(Routes.addPetRoute(tutorId))
                 }
             )
         }
         composable(
             route = Routes.AddPet.route,
             arguments = listOf(
-                navArgument("userId") {
+                navArgument("tutorId") {
                     type = NavType.IntType
                 }
             )
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            val tutorId = backStackEntry.arguments?.getInt("tutorId") ?: 0
             AddPetScreen(
-                userId = userId,
+                tutorId = tutorId,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

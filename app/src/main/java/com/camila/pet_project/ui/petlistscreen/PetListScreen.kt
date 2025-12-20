@@ -35,14 +35,14 @@ import com.camila.pet_project.components.PetCardComponent
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PetListScreen(
-    userId: Int = 0,
+    tutorId: Int = 0,
     viewModel: PetListViewModel = hiltViewModel(),
     onAddPetClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(userId) {
-        viewModel.loadPets(userId)
+    LaunchedEffect(tutorId) {
+        viewModel.loadPets(tutorId)
     }
 
     Scaffold(
@@ -127,5 +127,5 @@ private fun EmptyPetListContent() {
 @Preview
 @Composable
 fun PetListScreenPreview() {
-    PetListScreen(userId = 1)
+    PetListScreen(tutorId = 1)
 }

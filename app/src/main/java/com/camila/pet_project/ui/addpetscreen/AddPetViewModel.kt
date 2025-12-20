@@ -21,7 +21,8 @@ data class AddPetUiState(
     val photoUri: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val success: Boolean = false
+    val success: Boolean = false,
+    val tutorId: Int = 0
 )
 
 @HiltViewModel
@@ -31,6 +32,10 @@ class AddPetViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(AddPetUiState())
     val uiState: StateFlow<AddPetUiState> = _uiState.asStateFlow()
+
+    fun setTutorId(tutorId: Int) {
+        _uiState.value = _uiState.value.copy(tutorId = tutorId)
+    }
 
     fun onNameChange(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
@@ -60,7 +65,7 @@ class AddPetViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(photoUri = uri)
     }
 
-    fun savePet(userId: Int) {
+    fun savePet() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
@@ -92,7 +97,7 @@ class AddPetViewModel @Inject constructor(
                     tutorPhone = currentState.tutorPhone,
                     fivFelvStatus = currentState.fivFelvStatus,
                     photoUri = currentState.photoUri,
-                    userId = userId,
+                    tutorId = currentState.tutorId,
                     type = "cat" // Default to cat for now
                 )
 

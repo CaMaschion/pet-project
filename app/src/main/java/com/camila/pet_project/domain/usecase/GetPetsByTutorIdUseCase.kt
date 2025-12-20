@@ -5,11 +5,11 @@ import com.camila.pet_project.domain.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetPetsByUserIdUseCase @Inject constructor(
+class GetPetsByTutorIdUseCase @Inject constructor(
     private val petRepository: PetRepository
 ) {
-    operator fun invoke(userId: Int): Flow<List<PetDomain>> {
-        return petRepository.getPetsByUserId(userId)
+    operator fun invoke(tutorId: Int): Flow<List<PetDomain>> {
+        return petRepository.getPetsByTutorId(tutorId)
     }
 }
 

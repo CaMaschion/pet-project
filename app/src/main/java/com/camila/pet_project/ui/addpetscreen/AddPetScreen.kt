@@ -52,7 +52,7 @@ import coil.compose.AsyncImage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPetScreen(
-    userId: Int,
+    tutorId: Int,
     viewModel: AddPetViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
@@ -65,6 +65,10 @@ fun AddPetScreen(
         uri?.let {
             viewModel.onPhotoUriChange(it.toString())
         }
+    }
+
+    LaunchedEffect(tutorId) {
+        viewModel.setTutorId(tutorId)
     }
 
     LaunchedEffect(uiState.success) {
@@ -221,7 +225,7 @@ fun AddPetScreen(
 
             // Save button
             Button(
-                onClick = { viewModel.savePet(userId) },
+                onClick = { viewModel.savePet() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             ) {
@@ -267,5 +271,5 @@ private fun FivFelvStatusOption(
 @Preview(showBackground = true)
 @Composable
 fun AddPetScreenPreview() {
-    AddPetScreen(userId = 1)
+    AddPetScreen(tutorId = 1)
 }
