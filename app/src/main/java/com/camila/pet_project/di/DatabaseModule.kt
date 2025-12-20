@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.camila.pet_project.data.PetPassportDatabase
 import com.camila.pet_project.data.dao.PetDao
-import com.camila.pet_project.data.dao.UserDao
+import com.camila.pet_project.data.dao.TutorDao
 import com.camila.pet_project.data.dao.VaccineDao
 import com.camila.pet_project.data.dao.VaccineRegisterDao
 import com.camila.pet_project.data.repositories.PetRepositoryImpl
-import com.camila.pet_project.data.repositories.UserRepositoryImpl
+import com.camila.pet_project.data.repositories.TutorRepositoryImpl
 import com.camila.pet_project.domain.repository.PetRepository
-import com.camila.pet_project.domain.repository.UserRepository
+import com.camila.pet_project.domain.repository.TutorRepository
 import com.camila.pet_project.util.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -39,7 +39,7 @@ object DatabaseModule {
     
     @Singleton
     @Provides
-    fun provideUserDao(database: PetPassportDatabase): UserDao = database.userDao()
+    fun provideTutorDao(database: PetPassportDatabase): TutorDao = database.tutorDao()
 
     @Singleton
     @Provides
@@ -56,8 +56,8 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository {
-        return userRepositoryImpl
+    fun provideTutorRepository(tutorRepositoryImpl: TutorRepositoryImpl): TutorRepository {
+        return tutorRepositoryImpl
     }
 
     @Singleton

@@ -11,6 +11,6 @@ data class PetDomain(
     val tutorPhone: String = "",
     val fivFelvStatus: String = "",
     val description: String = "",
-    val userId: Int = 0
+    val tutorId: Int = 0
 )
 

@@ -53,7 +53,7 @@ fun LoginScreen(
         viewModel.navigationEvents.collect { event ->
             when (event) {
                 is NavigationEvent.NavigateToPetList -> {
-                    navController.navigate("petList/${event.userId}") {
+                    navController.navigate("petList/${event.tutorId}") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
@@ -65,12 +65,12 @@ fun LoginScreen(
     }
 
     LoginContent(
-        userName = uiState.userName,
+        email = uiState.email,
         password = uiState.password,
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         isValid = uiState.isValid,
-        onUserNameChanged = viewModel::updateUserName,
+        onEmailChanged = viewModel::updateEmail,
         onPasswordChanged = viewModel::updatePassword,
         onLoginClick = viewModel::login,
         onNavigateToRegister = viewModel::navigateToRegister,
@@ -80,12 +80,12 @@ fun LoginScreen(
 
 @Composable
 private fun LoginContent(
-    userName: String,
+    email: String,
     password: String,
     isLoading: Boolean,
     errorMessage: String?,
     isValid: Boolean,
-    onUserNameChanged: (String) -> Unit,
+    onEmailChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onLoginClick: () -> Unit,
     onNavigateToRegister: () -> Unit,
@@ -132,13 +132,13 @@ private fun LoginContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Username Field
+            // Email Field
             OutlinedTextField(
-                value = userName,
-                onValueChange = onUserNameChanged,
+                value = email,
+                onValueChange = onEmailChanged,
                 enabled = !isLoading,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                label = { Text("Username") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                label = { Text("Email") },
                 singleLine = true,
                 isError = errorMessage != null,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -240,12 +240,12 @@ private fun LoginContent(
 @Composable
 fun LoginScreenPreview() {
     LoginContent(
-        userName = "",
+        email = "",
         password = "",
         isLoading = false,
         errorMessage = null,
         isValid = false,
-        onUserNameChanged = {},
+        onEmailChanged = {},
         onPasswordChanged = {},
         onLoginClick = {},
         onNavigateToRegister = {},
@@ -257,12 +257,12 @@ fun LoginScreenPreview() {
 @Composable
 fun LoginScreenFilledPreview() {
     LoginContent(
-        userName = "testuser",
+        email = "test@example.com",
         password = "password123",
         isLoading = false,
         errorMessage = null,
         isValid = true,
-        onUserNameChanged = {},
+        onEmailChanged = {},
         onPasswordChanged = {},
         onLoginClick = {},
         onNavigateToRegister = {},
@@ -274,12 +274,12 @@ fun LoginScreenFilledPreview() {
 @Composable
 fun LoginScreenErrorPreview() {
     LoginContent(
-        userName = "testuser",
+        email = "test@example.com",
         password = "wrong",
         isLoading = false,
-        errorMessage = "Invalid username or password",
+        errorMessage = "Invalid email or password",
         isValid = true,
-        onUserNameChanged = {},
+        onEmailChanged = {},
         onPasswordChanged = {},
         onLoginClick = {},
         onNavigateToRegister = {},

@@ -3,7 +3,7 @@ package com.camila.pet_project.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.camila.pet_project.domain.usecase.LoginUserUseCase
+import com.camila.pet_project.domain.usecase.LoginTutorUseCase
 import com.camila.pet_project.ui.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUserUseCase: LoginUserUseCase
+    private val loginTutorUseCase: LoginTutorUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
@@ -43,19 +43,19 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            val result = loginUserUseCase(currentState.userName, currentState.password)
+            val result = loginTutorUseCase(currentState.email, currentState.password)
 
             result.fold(
-                onSuccess = { user ->
-                    Log.d(TAG, "Login successful for user: ${user.userName}")
+                onSuccess = { tutor ->
+                    Log.d(TAG, "Login successful for tutor: ${tutor.name}")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             errorMessage = null,
-                            currentUserId = user.id
+                            currentUserId = tutor.id
                         )
                     }
-                    _navigationEvents.emit(NavigationEvent.NavigateToPetList(user.id))
+                    _navigationEvents.emit(NavigationEvent.NavigateToPetList(tutor.id))
                 },
                 onFailure = { error ->
                     Log.e(TAG, "Login failed: ${error.message}")
@@ -80,12 +80,12 @@ class LoginViewModel @Inject constructor(
     }
 
     /**
-     * Updates username field
+     * Updates email field
      */
-    fun updateUserName(userName: String) {
+    fun updateEmail(email: String) {
         _uiState.update {
             it.copy(
-                userName = userName,
+                email = email,
                 errorMessage = null
             ).validate()
         }
@@ -119,7 +119,7 @@ class LoginViewModel @Inject constructor(
  * UI State for Login screen
  */
 data class LoginState(
-    val userName: String = "",
+    val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -130,7 +130,7 @@ data class LoginState(
      * Validates the current state and updates isValid flag
      */
     fun validate(): LoginState {
-        val valid = userName.isNotBlank() && password.isNotBlank()
+        val valid = email.isNotBlank() && password.isNotBlank()
         return this.copy(isValid = valid)
     }
 }

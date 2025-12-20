@@ -28,8 +28,8 @@ class PetRepositoryImpl @Inject constructor(
         return petDao.getPetById(petId)?.toDomain()
     }
 
-    override fun getPetsByUserId(userId: Int): Flow<List<PetDomain>> {
-        return petDao.getPetsByUserId(userId).map { pets ->
+    override fun getPetsByTutorId(tutorId: Int): Flow<List<PetDomain>> {
+        return petDao.getPetsByTutorId(tutorId).map { pets ->
             pets.map { it.toDomain() }
         }
     }
@@ -52,7 +52,7 @@ class PetRepositoryImpl @Inject constructor(
             tutorPhone = tutorPhone,
             fivFelvStatus = fivFelvStatus,
             description = description,
-            userId = userId
+            tutorId = tutorId
         )
     }
 
@@ -68,8 +68,7 @@ class PetRepositoryImpl @Inject constructor(
             tutorPhone = tutorPhone,
             fivFelvStatus = fivFelvStatus,
             description = description,
-            userId = userId
+            tutorId = tutorId
         )
     }
 }
-

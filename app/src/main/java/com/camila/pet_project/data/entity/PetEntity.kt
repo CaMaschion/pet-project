@@ -9,13 +9,13 @@ import androidx.room.PrimaryKey
     tableName = "pet_table",
     foreignKeys = [
         ForeignKey(
-            entity = UserEntity::class,
+            entity = TutorEntity::class,
             parentColumns = ["id"],
-            childColumns = ["userId"],
+            childColumns = ["tutorId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("userId")]
+    indices = [Index("tutorId")]
 )
 data class PetEntity(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
@@ -28,5 +28,5 @@ data class PetEntity(
     val tutorPhone: String = "",
     val fivFelvStatus: String = "", // "negative", "positive", or "not_tested"
     val description: String = "",
-    val userId: Int = 0
+    val tutorId: Int = 0
 )
